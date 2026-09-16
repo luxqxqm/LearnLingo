@@ -8,7 +8,7 @@ import { Teacher } from "../../types/teacher";
 import { useFavorites } from "../../providers/FavoritesProvider";
 import { getTeachers } from "../../lib/teachers";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
-
+import Loader from "../../components/Loader/Loader";
 export default function FavoritesPage() {
   const { user, loading: authLoading } = useAuth();
   const { favorites } = useFavorites();
@@ -36,12 +36,11 @@ export default function FavoritesPage() {
 
     fetchTeachers();
   }, [user, favorites]);
-
   if (authLoading) {
     return (
       <main className={styles.page}>
         <div className={styles.container}>
-          <p className={styles.message}>Loading...</p>
+          <Loader text="Loading..." />
         </div>
       </main>
     );
@@ -63,7 +62,7 @@ export default function FavoritesPage() {
     return (
       <main className={styles.page}>
         <div className={styles.container}>
-          <p className={styles.message}>Loading favorites...</p>
+          <Loader text="Loading favorites..." />
         </div>
       </main>
     );
