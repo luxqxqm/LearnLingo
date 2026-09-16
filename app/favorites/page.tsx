@@ -1,14 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import styles from "./page.module.css";
-import { useAuth } from "../../hooks/useAuth";
 import { Teacher } from "../../types/teacher";
-import { useFavorites } from "../../providers/FavoritesProvider";
+import { useAuth } from "../../hooks/useAuth";
 import { getTeachers } from "../../lib/teachers";
-import TeacherCard from "../../components/TeacherCard/TeacherCard";
+import { useFavorites } from "../../providers/FavoritesProvider";
 import Loader from "../../components/Loader/Loader";
+import Icon from "../../components/Icon/Icon";
+import TeacherCard from "../../components/TeacherCard/TeacherCard";
+
 export default function FavoritesPage() {
   const { user, loading: authLoading } = useAuth();
   const { favorites } = useFavorites();
@@ -36,6 +39,7 @@ export default function FavoritesPage() {
 
     fetchTeachers();
   }, [user, favorites]);
+
   if (authLoading) {
     return (
       <main className={styles.page}>
@@ -50,9 +54,22 @@ export default function FavoritesPage() {
     return (
       <main className={styles.page}>
         <div className={styles.container}>
-          <p className={styles.message}>
-            Please log in to view your favorite teachers.
-          </p>
+          <div className={styles.emptyState}>
+            <div className={styles.icon}>
+              <Icon name="like" width={32} height={32} />
+            </div>
+
+            <h1 className={styles.emptyTitle}>Log in to see your favorites</h1>
+
+            <p className={styles.emptyText}>
+              Save your favorite teachers and easily find them whenever you need
+              them.
+            </p>
+
+            <Link href="/teachers" className={styles.emptyButton}>
+              Find a teacher
+            </Link>
+          </div>
         </div>
       </main>
     );
@@ -72,7 +89,22 @@ export default function FavoritesPage() {
     <main className={styles.page}>
       <div className={styles.container}>
         {teachers.length === 0 ? (
-          <p className={styles.message}>You have no favorite teachers yet.</p>
+          <div className={styles.emptyState}>
+            <div className={styles.icon}>
+              <Icon name="like" width={32} height={32} />
+            </div>
+
+            <h1 className={styles.emptyTitle}>No favorite teachers yet</h1>
+
+            <p className={styles.emptyText}>
+              You haven`t added any teachers to your favorites yet. Find a
+              teacher and save them here.
+            </p>
+
+            <Link href="/teachers" className={styles.emptyButton}>
+              Find a teacher
+            </Link>
+          </div>
         ) : (
           <ul className={styles.list}>
             {teachers.map((teacher) => (
