@@ -1,12 +1,15 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
+import { useEffect, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
 
-import { loginSchema, registerSchema } from "../../schemas/authSchema";
+import styles from "./AuthModal.module.css";
 import { useAuth } from "../../hooks/useAuth";
-import type { LoginFormValues, RegisterFormValues } from "../../types/auth";
+import { loginSchema, registerSchema } from "../../schemas/authSchema";
+import { LoginFormValues, RegisterFormValues } from "../../types/auth";
+import Icon from "../Icon/Icon";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -17,20 +20,25 @@ export default function AuthModal({
   onClose,
   initialMode = "login",
 }: AuthModalProps) {
-  const { login, register } = useAuth();
+  const { login, register: registerUser } = useAuth();
 
-  const [isRegisterMode, setIsRegisterMode] = useState(
-    initialMode === "register",
-  );
-  const [firebaseError, setFirebaseError] = useState("");
+  const isLogin = initialMode === "login";
 
-  const {
-    register: registerField,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<LoginFormValues | RegisterFormValues>({
-    resolver: yupResolver(isRegisterMode ? registerSchema : loginSchema),
+  const loginForm = useForm<LoginFormValues>({
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: yupResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
   });
 
   useEffect(() => {
@@ -47,90 +55,155 @@ export default function AuthModal({
     };
   }, [onClose]);
 
-  const onSubmit = async (data: LoginFormValues | RegisterFormValues) => {
-    setFirebaseError("");
-
-    try {
-      if (isRegisterMode && "name" in data) {
-        await register(data.name, data.email, data.password);
-      } else {
-        await login(data.email, data.password);
-      }
-
-      reset();
-      onClose();
-    } catch (error) {
-      if (error instanceof Error) {
-        setFirebaseError(error.message);
-      } else {
-        setFirebaseError("Something went wrong");
-      }
-    }
-  };
-
-  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleBackdropClick = (event: MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
-  const toggleMode = () => {
-    setFirebaseError("");
-    reset();
-    setIsRegisterMode((currentMode) => !currentMode);
+  const handleLogin = async (data: LoginFormValues) => {
+    try {
+      await login(data.email, data.password);
+
+      toast.success("You have successfully logged in!");
+
+      onClose();
+    } catch {
+      toast.error("Invalid email or password");
+    }
+  };
+
+  const handleRegistration = async (data: RegisterFormValues) => {
+    try {
+      await registerUser(data.name, data.email, data.password);
+
+      toast.success("Your account has been successfully created!");
+
+      onClose();
+    } catch {
+      toast.error("Failed to create account");
+    }
   };
 
   return (
-    <div onClick={handleBackdropClick}>
-      <div>
-        <button type="button" onClick={onClose}>
-          ×
+    <div className={styles.backdrop} onMouseDown={handleBackdropClick}>
+      <div className={styles.modal}>
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close authentication modal"
+        >
+          <span className={styles.closeIcon} />
         </button>
 
-        <h2>{isRegisterMode ? "Registration" : "Log In"}</h2>
+        <h2 className={styles.title}>{isLogin ? "Log In" : "Registration"}</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {isRegisterMode && (
-            <>
-              <label>
-                Name
-                <input type="text" {...registerField("name" as const)} />
-              </label>
+        <p className={styles.description}>
+          {isLogin
+            ? "Welcome back! Please enter your credentials to access your account and continue your search for an ideal teacher."
+            : "Thank you for your interest in our platform! In order to register, we need some information. Please provide us with the following information"}
+        </p>
 
-              {"name" in errors && errors.name && <p>{errors.name.message}</p>}
-            </>
-          )}
+        {isLogin ? (
+          <form
+            className={styles.form}
+            onSubmit={loginForm.handleSubmit(handleLogin)}
+          >
+            <label className={styles.field}>
+              <input
+                type="email"
+                placeholder="Email"
+                {...loginForm.register("email")}
+              />
 
-          <label>
-            Email
-            <input type="email" {...registerField("email")} />
-          </label>
+              {loginForm.formState.errors.email && (
+                <span className={styles.error}>
+                  {loginForm.formState.errors.email.message}
+                </span>
+              )}
+            </label>
 
-          {errors.email && <p>{errors.email.message}</p>}
+            <label className={styles.field}>
+              <input
+                type="password"
+                placeholder="Password"
+                {...loginForm.register("password")}
+              />
 
-          <label>
-            Password
-            <input type="password" {...registerField("password")} />
-          </label>
+              {loginForm.formState.errors.password && (
+                <span className={styles.error}>
+                  {loginForm.formState.errors.password.message}
+                </span>
+              )}
+            </label>
 
-          {errors.password && <p>{errors.password.message}</p>}
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loginForm.formState.isSubmitting}
+            >
+              {loginForm.formState.isSubmitting ? "Please wait..." : "Log In"}
+            </button>
+          </form>
+        ) : (
+          <form
+            className={styles.form}
+            onSubmit={registerForm.handleSubmit(handleRegistration)}
+          >
+            <label className={styles.field}>
+              <input
+                type="text"
+                placeholder="Name"
+                {...registerForm.register("name")}
+              />
 
-          {firebaseError && <p>{firebaseError}</p>}
+              {registerForm.formState.errors.name && (
+                <span className={styles.error}>
+                  {registerForm.formState.errors.name.message}
+                </span>
+              )}
+            </label>
 
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting
-              ? "Loading..."
-              : isRegisterMode
-                ? "Sign Up"
-                : "Log In"}
-          </button>
-        </form>
+            <label className={styles.field}>
+              <input
+                type="email"
+                placeholder="Email"
+                {...registerForm.register("email")}
+              />
 
-        <button type="button" onClick={toggleMode}>
-          {isRegisterMode
-            ? "Already have an account? Log In"
-            : "Don't have an account? Sign Up"}
-        </button>
+              {registerForm.formState.errors.email && (
+                <span className={styles.error}>
+                  {registerForm.formState.errors.email.message}
+                </span>
+              )}
+            </label>
+
+            <label className={styles.field}>
+              <input
+                type="password"
+                placeholder="Password"
+                {...registerForm.register("password")}
+              />
+
+              {registerForm.formState.errors.password && (
+                <span className={styles.error}>
+                  {registerForm.formState.errors.password.message}
+                </span>
+              )}
+            </label>
+
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={registerForm.formState.isSubmitting}
+            >
+              {registerForm.formState.isSubmitting
+                ? "Please wait..."
+                : "Sign Up"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

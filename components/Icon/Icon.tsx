@@ -2,7 +2,13 @@ import type { SVGProps } from "react";
 
 import styles from "./Icon.module.css";
 
-export type IconName = "logo" | "log-in" | "like" | "star";
+export type IconName =
+  | "logo"
+  | "log-in"
+  | "like"
+  | "star"
+  | "book-open"
+  | "close-icon";
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;

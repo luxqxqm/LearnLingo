@@ -2,21 +2,26 @@
 
 import Image from "next/image";
 import { useState } from "react";
+
+import styles from "./TeacherCard.module.css";
+import { Teacher } from "../../types/teacher";
 import { useFavorites } from "../../providers/FavoritesProvider";
 import { useAuth } from "../../hooks/useAuth";
-import { Teacher } from "../../types/teacher";
-import AuthModal from "../AuthModal/AuthModal";
+import Icon from "../Icon/Icon";
 import BookingModal from "../BookingModal/BookingModal";
+import AuthModal from "../AuthModal/AuthModal";
+
 interface TeacherCardProps {
   teacher: Teacher;
 }
+
 export default function TeacherCard({ teacher }: TeacherCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
-
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const favorite = isFavorite(teacher.id);
 
@@ -29,77 +34,170 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
     toggleFavorite(teacher.id);
   };
 
-  const handleReadMore = () => {
-    setIsExpanded((current) => !current);
-  };
-
   return (
     <>
-      <article>
-        <Image
-          src={teacher.avatar_url}
-          alt={`${teacher.name} ${teacher.surname}`}
-          width={96}
-          height={96}
-        />
+      <article className={styles.card}>
+        <div className={styles.avatarWrapper}>
+          <Image
+            src={teacher.avatar_url}
+            alt={`${teacher.name} ${teacher.surname}`}
+            width={96}
+            height={96}
+            className={styles.avatar}
+          />
 
-        <h2>
-          {teacher.name} {teacher.surname}
-        </h2>
+          <span className={styles.online} />
+        </div>
 
-        <p>⭐ {teacher.rating}</p>
+        <div className={styles.content}>
+          <div className={styles.top}>
+            <p className={styles.category}>Languages</p>
 
-        <p>{teacher.reviews.length} reviews</p>
+            <div className={styles.statistics}>
+              <div className={styles.statItem}>
+                <Icon name="book-open" width={16} height={16} />
 
-        <p>{teacher.price_per_hour}$ / hour</p>
-
-        <p>{teacher.languages.join(", ")}</p>
-
-        <p>{teacher.levels.join(", ")}</p>
-
-        <p>Lessons done: {teacher.lessons_done}</p>
-
-        <button type="button" onClick={handleFavorite}>
-          {favorite ? "❤️" : "♡"}
-        </button>
-
-        <button type="button" onClick={handleReadMore}>
-          {isExpanded ? "Read less" : "Read more"}
-        </button>
-
-        {isExpanded && (
-          <div>
-            <p>{teacher.lesson_info}</p>
-
-            <p>{teacher.experience}</p>
-
-            <h3>Conditions</h3>
-
-            <ul>
-              {teacher.conditions.map((condition) => (
-                <li key={condition}>{condition}</li>
-              ))}
-            </ul>
-
-            <h3>Reviews</h3>
-
-            {teacher.reviews.map((review) => (
-              <div key={`${review.reviewer_name}-${review.comment}`}>
-                <p>
-                  {review.reviewer_name} — ⭐ {review.reviewer_rating}
-                </p>
-                <p>{review.comment}</p>
+                <span>Lessons online</span>
               </div>
-            ))}
+
+              <span className={styles.divider} />
+
+              <span>Lessons done: {teacher.lessons_done}</span>
+
+              <span className={styles.divider} />
+
+              <div className={styles.statItem}>
+                <Icon name="star" width={16} height={16} />
+
+                <span>Rating: {teacher.rating}</span>
+              </div>
+
+              <span className={styles.divider} />
+
+              <span>
+                Price / 1 hour:{" "}
+                <strong className={styles.price}>
+                  {teacher.price_per_hour}$
+                </strong>
+              </span>
+
+              <button
+                type="button"
+                className={`${styles.favoriteButton} ${
+                  favorite ? styles.favoriteButtonActive : ""
+                }`}
+                onClick={handleFavorite}
+                aria-label={
+                  favorite
+                    ? "Remove teacher from favorites"
+                    : "Add teacher to favorites"
+                }
+              >
+                <Icon name="like" width={26} height={26} />
+              </button>
+            </div>
           </div>
-        )}
+
+          <h2 className={styles.name}>
+            {teacher.name} {teacher.surname}
+          </h2>
+
+          <div className={styles.information}>
+            <p>
+              <span className={styles.infoLabel}>Speaks: </span>
+
+              <span className={styles.languages}>
+                {teacher.languages.join(", ")}
+              </span>
+            </p>
+
+            <p>
+              <span className={styles.infoLabel}>Lesson Info: </span>
+
+              <span>{teacher.lesson_info}</span>
+            </p>
+
+            <p>
+              <span className={styles.infoLabel}>Conditions: </span>
+
+              <span>{teacher.conditions.join(" ")}</span>
+            </p>
+          </div>
+
+          {!isExpanded && (
+            <button
+              type="button"
+              className={styles.readMore}
+              onClick={() => setIsExpanded(true)}
+            >
+              Read more
+            </button>
+          )}
+
+          {isExpanded && (
+            <div className={styles.expanded}>
+              <p className={styles.experience}>{teacher.experience}</p>
+
+              <ul className={styles.reviews}>
+                {teacher.reviews.map((review, index) => (
+                  <li
+                    key={`${review.reviewer_name}-${index}`}
+                    className={styles.review}
+                  >
+                    <div className={styles.reviewer}>
+                      <div className={styles.reviewerAvatar}>
+                        {review.reviewer_name.charAt(0)}
+                      </div>
+
+                      <div>
+                        <p className={styles.reviewerName}>
+                          {review.reviewer_name}
+                        </p>
+
+                        <div className={styles.reviewRating}>
+                          <Icon name="star" width={16} height={16} />
+
+                          <span>{review.reviewer_rating.toFixed(1)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className={styles.comment}>{review.comment}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <ul className={styles.levels}>
+            {teacher.levels.map((level, index) => (
+              <li
+                key={level}
+                className={`${styles.level} ${
+                  index === 0 ? styles.activeLevel : ""
+                }`}
+              >
+                #{level}
+              </li>
+            ))}
+          </ul>
+
+          {isExpanded && (
+            <button
+              type="button"
+              className={styles.bookButton}
+              onClick={() => setIsBookingModalOpen(true)}
+            >
+              Book trial lesson
+            </button>
+          )}
+        </div>
       </article>
-      <button type="button" onClick={() => setIsBookingModalOpen(true)}>
-        Book trial lesson
-      </button>
+
       {isAuthModalOpen && (
         <AuthModal onClose={() => setIsAuthModalOpen(false)} />
       )}
+
       {isBookingModalOpen && (
         <BookingModal
           teacher={teacher}
@@ -109,4 +207,3 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
     </>
   );
 }
-    

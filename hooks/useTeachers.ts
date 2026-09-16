@@ -52,11 +52,11 @@ export const useTeachers = (
           return;
         }
 
-        const data = await getTeachers(TEACHERS_PER_PAGE);
+      const data = await getTeachers(100);
 
-        setTeachers(data);
-        setAllTeachers([]);
-        setHasMore(data.length === TEACHERS_PER_PAGE);
+          setAllTeachers(data);
+          setTeachers(data.slice(0, TEACHERS_PER_PAGE));
+          setHasMore(data.length > TEACHERS_PER_PAGE);
       } catch {
         setError("Failed to load teachers");
       } finally {

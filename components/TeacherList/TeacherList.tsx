@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+import styles from "./TeacherList.module.css";
 import { FiltersValues } from "../../types/filters";
 import { useTeachers } from "../../hooks/useTeachers";
 import Filters from "../Filter/Filters";
@@ -36,28 +38,41 @@ export default function TeacherList() {
   const filterTeachersData = allTeachers.length > 0 ? allTeachers : teachers;
 
   return (
-    <section>
-      <Filters
-        teachers={filterTeachersData}
-        values={filters}
-        onChange={setFilters}
-      />
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <Filters
+          teachers={filterTeachersData}
+          values={filters}
+          onChange={setFilters}
+        />
 
-      {teachers.length === 0 ? (
-        <p>No teachers found</p>
-      ) : (
-        teachers.map((teacher) => (
-          <TeacherCard key={teacher.id} teacher={teacher} />
-        ))
-      )}
+        {teachers.length === 0 ? (
+          <p className={styles.empty}>No teachers found</p>
+        ) : (
+          <ul className={styles.list}>
+            {teachers.map((teacher) => (
+              <li key={teacher.id}>
+                <TeacherCard teacher={teacher} />
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {hasMore && (
-        <button type="button" onClick={loadMore} disabled={loadingMore}>
-          {loadingMore ? "Loading..." : "Load more"}
-        </button>
-      )}
+        {hasMore && (
+          <div className={styles.loadMoreWrapper}>
+            <button
+              type="button"
+              className={styles.loadMore}
+              onClick={loadMore}
+              disabled={loadingMore}
+            >
+              {loadingMore ? "Loading..." : "Load more"}
+            </button>
+          </div>
+        )}
 
-      {error && <p>{error}</p>}
-    </section>
+        {error && <p className={styles.error}>{error}</p>}
+      </div>
+    </main>
   );
 }

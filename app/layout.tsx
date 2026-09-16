@@ -5,6 +5,7 @@ import "./globals.css";
 import AuthProvider from "../providers/AuthProvider";
 import FavoritesProvider from "../providers/FavoritesProvider";
 import Header from "../components/Header/Header";
+import { Toaster } from "react-hot-toast";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -28,6 +29,20 @@ export default function RootLayout({
           <FavoritesProvider>
             <Header />
             {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                success: {
+                  style: {
+                    background: "#ffffff",
+                    color: "#121417",
+                    border: "1px solid #38cd3e",
+                    borderRadius: "12px",
+                  },
+                },
+              }}
+            />
           </FavoritesProvider>
         </AuthProvider>
       </body>

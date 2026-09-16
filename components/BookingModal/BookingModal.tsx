@@ -1,12 +1,20 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
+
+import Icon from "../Icon/Icon";
+
+import type { BookingFormValues } from "../../types/booking";
+
+import type { Teacher } from "../../types/teacher";
+
 import { bookingSchema } from "../../schemas/bookingSchema";
-import { Teacher } from "../../types/teacher";
-import { BookingFormValues } from "../../types/booking";
+
+import styles from "./BookingModal.module.css";
 
 interface BookingModalProps {
   teacher: Teacher;
@@ -25,10 +33,15 @@ export default function BookingModal({ teacher, onClose }: BookingModalProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
+    formState: { errors },
   } = useForm<BookingFormValues>({
     resolver: yupResolver(bookingSchema),
+    defaultValues: {
+      reason: reasons[0],
+      name: "",
+      email: "",
+      phone: "",
+    },
   });
 
   useEffect(() => {
@@ -45,89 +58,114 @@ export default function BookingModal({ teacher, onClose }: BookingModalProps) {
     };
   }, [onClose]);
 
-  const onSubmit = async (data: BookingFormValues) => {
-    console.log(data);
-
-    reset();
-    onClose();
-  };
-
-  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleBackdropClick = (event: MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
+  const onSubmit = () => {
+    toast.success("Your trial lesson has been booked successfully!");
+
+    onClose();
+  };
+
   return (
-    <div onClick={handleBackdropClick}>
-      <div>
-        <button type="button" onClick={onClose}>
-          ×
+    <div className={styles.backdrop} onMouseDown={handleBackdropClick}>
+      <div className={styles.modal}>
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close booking modal"
+        >
+          <Icon name="close-icon" width={24} height={24} />
         </button>
 
-        <h2>Book trial lesson</h2>
+        <h2 className={styles.title}>Book trial lesson</h2>
 
-        <p>
+        <p className={styles.description}>
           Our experienced tutor will assess your current language level, discuss
           your learning goals, and tailor the lesson to your specific needs.
         </p>
 
-        <div>
+        <div className={styles.teacher}>
           <Image
             src={teacher.avatar_url}
             alt={`${teacher.name} ${teacher.surname}`}
-            width={40}
-            height={40}
+            width={44}
+            height={44}
+            className={styles.teacherAvatar}
           />
 
           <div>
-            <span>Your teacher</span>
-            <p>
+            <p className={styles.teacherLabel}>Your teacher</p>
+
+            <p className={styles.teacherName}>
               {teacher.name} {teacher.surname}
             </p>
           </div>
         </div>
 
-        <h3>What is your main reason for learning English?</h3>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <fieldset className={styles.reasonFieldset}>
+            <legend className={styles.reasonTitle}>
+              What is your main reason for learning English?
+            </legend>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <fieldset>
-            <legend>Reason</legend>
+            <div className={styles.reasons}>
+              {reasons.map((reason) => (
+                <label key={reason} className={styles.reason}>
+                  <input type="radio" value={reason} {...register("reason")} />
 
-            {reasons.map((reason) => (
-              <label key={reason}>
-                <input type="radio" value={reason} {...register("reason")} />
-                {reason}
-              </label>
-            ))}
+                  <span className={styles.radio} />
+
+                  <span>{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {errors.reason && (
+              <p className={styles.error}>{errors.reason.message}</p>
+            )}
           </fieldset>
 
-          {errors.reason && <p>{errors.reason.message}</p>}
+          <div className={styles.fields}>
+            <label className={styles.field}>
+              <input
+                type="text"
+                placeholder="Full Name"
+                {...register("name")}
+              />
 
-          <label>
-            <input type="text" placeholder="Full Name" {...register("name")} />
-          </label>
+              {errors.name && (
+                <span className={styles.error}>{errors.name.message}</span>
+              )}
+            </label>
 
-          {errors.name && <p>{errors.name.message}</p>}
+            <label className={styles.field}>
+              <input type="email" placeholder="Email" {...register("email")} />
 
-          <label>
-            <input type="email" placeholder="Email" {...register("email")} />
-          </label>
+              {errors.email && (
+                <span className={styles.error}>{errors.email.message}</span>
+              )}
+            </label>
 
-          {errors.email && <p>{errors.email.message}</p>}
+            <label className={styles.field}>
+              <input
+                type="tel"
+                placeholder="Phone number"
+                {...register("phone")}
+              />
 
-          <label>
-            <input
-              type="tel"
-              placeholder="Phone number"
-              {...register("phone")}
-            />
-          </label>
+              {errors.phone && (
+                <span className={styles.error}>{errors.phone.message}</span>
+              )}
+            </label>
+          </div>
 
-          {errors.phone && <p>{errors.phone.message}</p>}
-
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Loading..." : "Book"}
+          <button type="submit" className={styles.submitButton}>
+            Book
           </button>
         </form>
       </div>

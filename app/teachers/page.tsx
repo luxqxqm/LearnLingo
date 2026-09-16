@@ -11,17 +11,6 @@ export default function TeachersPage() {
 
   return (
     <main>
-      <h1>Teachers</h1>
-
-      {user ? (
-        <div>
-          <p>Logged in: {user.email}</p>
-          <button onClick={logout}>Logout</button>
-        </div>
-      ) : (
-        <p>Not logged in</p>
-      )}
-
       <TeacherList />
     </main>
   );

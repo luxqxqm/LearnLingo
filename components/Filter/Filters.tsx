@@ -1,7 +1,8 @@
 "use client";
-
+import { useEffect, useRef, useState } from "react";
 import { FiltersValues } from "../../types/filters";
 import { Teacher } from "../../types/teacher";
+import styles from "./Filters.module.css";
 
 interface FiltersProps {
   teachers: Teacher[];
@@ -9,10 +10,117 @@ interface FiltersProps {
   onChange: (values: FiltersValues) => void;
 }
 
+type FilterKey = keyof FiltersValues;
+
+interface DropdownProps {
+  label: string;
+  value: string;
+  options: string[];
+  placeholder: string;
+  className: string;
+  onChange: (value: string) => void;
+}
+const prices = ["10", "20", "30", "40"];
+function Dropdown({
+  label,
+  value,
+  options,
+  placeholder,
+  className,
+  onChange,
+}: DropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  const handleSelect = (option: string) => {
+    onChange(option);
+    setIsOpen(false);
+  };
+
+  return (
+    <div ref={wrapperRef} className={`${styles.field} ${className}`}>
+      <span className={styles.label}>{label}</span>
+
+      <div className={styles.dropdown}>
+        <button
+          type="button"
+          className={`${styles.select} ${isOpen ? styles.selectOpen : ""}`}
+          onClick={() => setIsOpen((current) => !current)}
+          aria-expanded={isOpen}
+        >
+          <span>{value || placeholder}</span>
+
+          <span
+            className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ""}`}
+          />
+        </button>
+
+        {isOpen && (
+          <div className={styles.menu}>
+            <button
+              type="button"
+              className={`${styles.option} ${
+                !value ? styles.optionActive : ""
+              }`}
+              onClick={() => handleSelect("")}
+            >
+              {placeholder}
+            </button>
+
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`${styles.option} ${
+                  value === option ? styles.optionActive : ""
+                }`}
+                onClick={() => handleSelect(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Filters({ teachers, values, onChange }: FiltersProps) {
   const languages = Array.from(
     new Set(teachers.flatMap((teacher) => teacher.languages)),
-  );
+  ).sort();
 
   const levels = Array.from(
     new Set(teachers.flatMap((teacher) => teacher.levels)),
@@ -20,9 +128,11 @@ export default function Filters({ teachers, values, onChange }: FiltersProps) {
 
   const prices = Array.from(
     new Set(teachers.map((teacher) => teacher.price_per_hour)),
-  ).sort((a, b) => a - b);
+  )
+    .sort((a, b) => a - b)
+    .map((price) => `${price} $`);
 
-  const handleChange = (field: keyof FiltersValues, value: string) => {
+  const handleChange = (field: FilterKey, value: string) => {
     onChange({
       ...values,
       [field]: value,
@@ -30,45 +140,33 @@ export default function Filters({ teachers, values, onChange }: FiltersProps) {
   };
 
   return (
-    <div>
-      <select
+    <div className={styles.filters}>
+      <Dropdown
+        label="Languages"
         value={values.language}
-        onChange={(event) => handleChange("language", event.target.value)}
-      >
-        <option value="">All languages</option>
+        options={languages}
+        placeholder="All languages"
+        className={styles.languageField}
+        onChange={(value) => handleChange("language", value)}
+      />
 
-        {languages.map((language) => (
-          <option key={language} value={language}>
-            {language}
-          </option>
-        ))}
-      </select>
-
-      <select
+      <Dropdown
+        label="Level of knowledge"
         value={values.level}
-        onChange={(event) => handleChange("level", event.target.value)}
-      >
-        <option value="">All levels</option>
+        options={levels}
+        placeholder="All levels"
+        className={styles.levelField}
+        onChange={(value) => handleChange("level", value)}
+      />
 
-        {levels.map((level) => (
-          <option key={level} value={level}>
-            {level}
-          </option>
-        ))}
-      </select>
-
-      <select
-        value={values.price}
-        onChange={(event) => handleChange("price", event.target.value)}
-      >
-        <option value="">All prices</option>
-
-        {prices.map((price) => (
-          <option key={price} value={price}>
-            ${price}
-          </option>
-        ))}
-      </select>
+      <Dropdown
+        label="Price"
+        value={values.price ? `${values.price} $` : ""}
+        options={prices}
+        placeholder="All"
+        className={styles.priceField}
+        onChange={(value) => handleChange("price", value.replace(" $", ""))}
+      />
     </div>
   );
 }
