@@ -1,0 +1,165 @@
+.header {
+    padding: 20px 0;
+    background-color: #fff;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 128px;
+}
+
+.logo {
+    justify-self: start;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+
+    color: var(--black-color);
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+}
+
+.auth {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: 16px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+
+    color: var(--black-color);
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.navLink {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.25;
+
+    color: var(--black-color);
+
+    transition: font-weight 200ms ease;
+}
+
+.navLink:hover,
+.navLink:focus,
+.navLink:active {
+    font-weight: 600;
+}
+
+.auth {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.loginButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 0;
+
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+
+    color: var(--black-color);
+    background-color: transparent;
+
+    cursor: pointer;
+}
+
+.registrationButton {
+    min-width: 166px;
+    padding: 14px 39px;
+
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+
+    color: var(--white-color);
+    background-color: var(--black-color);
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 200ms ease,
+        transform 200ms ease;
+}
+
+.registrationButton:hover,
+.registrationButton:focus {
+    background-color: #2b2d30;
+}
+
+.registrationButton:active {
+    transform: scale(0.98);
+}
+
+.userName {
+    max-width: 180px;
+
+    overflow: hidden;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    color: var(--black-color);
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logoutButton {
+    min-height: 48px;
+    padding: 12px 24px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: var(--white-color);
+    background-color: var(--black-color);
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition: opacity 200ms ease;
+}
+
+.logoutButton:hover,
+.logoutButton:focus {
+    opacity: 0.8;
+}
+
+.loginIcon {
+    color: #f4c550;
+}

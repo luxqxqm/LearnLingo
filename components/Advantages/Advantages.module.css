@@ -1,0 +1,35 @@
+.advantages {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 88px;
+    padding: 20px 88px;
+    border: 1px dashed var(--color-yellow);
+    border-radius: 30px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.description {
+    max-width: 100px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #6b6b6b;
+}

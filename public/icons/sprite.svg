@@ -1,0 +1,8 @@
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="logo" viewBox="0 0 28 28" fill="none"><g clip-path="url(#a)"><path fill="#ffda44" d="M14 28c7.732 0 14-6.268 14-14S21.732 0 14 0 0 6.268 0 14s6.268 14 14 14"/><path fill="#338af3" d="M0 14C0 6.268 6.268 0 14 0s14 6.268 14 14"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h28v28H0z"/></clipPath></defs></symbol>
+<symbol id="log-in" viewBox="0 0 20 20" fill="none"><path stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M12.5 2.5h1c1.4 0 2.1 0 2.635.272a2.5 2.5 0 0 1 1.092 1.093C17.5 4.4 17.5 5.1 17.5 6.5v7c0 1.4 0 2.1-.273 2.635a2.5 2.5 0 0 1-1.092 1.092C15.6 17.5 14.9 17.5 13.5 17.5h-1M8.333 14.167 12.5 10 8.333 5.833M12.5 10h-10"/></symbol>
+<symbol id="like" viewBox="0 0 25 22"><path stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M21.899 2.746a5.96 5.96 0 0 0-8.428 0l-1.149 1.148-1.148-1.148a5.96 5.96 0 0 0-8.428 8.429l1.148 1.148 8.428 8.428 8.429-8.428 1.148-1.149a5.96 5.96 0 0 0 0-8.428"/></symbol>
+<symbol id="star" viewBox="0 0 15 14" fill="none"><path stroke-width="1.2" stroke="#ffc531" fill="#ffc531" d="M8.89 4.126c.159.301.449.512.785.57l3.8.656-2.688 2.768a1.1 1.1 0 0 0-.3.923l.55 3.817-3.462-1.701-.117-.05a1.1 1.1 0 0 0-.736 0l-.118.05-3.461 1.701.55-3.817a1.1 1.1 0 0 0-.3-.923L.704 5.352l3.8-.656a1.1 1.1 0 0 0 .786-.57l1.8-3.411z"/></symbol>
+</defs>
+</svg>
