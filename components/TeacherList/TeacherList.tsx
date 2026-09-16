@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-
 import styles from "./TeacherList.module.css";
 import { FiltersValues } from "../../types/filters";
 import { useTeachers } from "../../hooks/useTeachers";
@@ -39,6 +38,10 @@ export default function TeacherList() {
 
   const filterTeachersData = allTeachers.length > 0 ? allTeachers : teachers;
 
+  const handleClearFilters = () => {
+    setFilters(initialFilters);
+  };
+
   return (
     <main className={styles.page}>
       <div className={styles.container}>
@@ -51,7 +54,26 @@ export default function TeacherList() {
         />
 
         {teachers.length === 0 ? (
-          <p className={styles.empty}>No teachers found</p>
+          <div className={styles.emptyState}>
+            <div className={styles.icon}>
+              <span>⌕</span>
+            </div>
+
+            <h2 className={styles.emptyTitle}>No teachers found</h2>
+
+            <p className={styles.emptyText}>
+              We couldn`t find any teachers matching your selected filters. Try
+              changing your search criteria.
+            </p>
+
+            <button
+              type="button"
+              className={styles.clearButton}
+              onClick={handleClearFilters}
+            >
+              Clear filters
+            </button>
+          </div>
         ) : (
           <ul className={styles.list}>
             {teachers.map((teacher) => (
@@ -62,7 +84,7 @@ export default function TeacherList() {
           </ul>
         )}
 
-        {hasMore && (
+        {hasMore && teachers.length > 0 && (
           <div className={styles.loadMoreWrapper}>
             <button
               type="button"
