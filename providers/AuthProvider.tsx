@@ -9,6 +9,7 @@ import {
   type User,
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
+
 import { auth } from "../lib/firebase";
 
 interface AuthContextValue {
@@ -50,6 +51,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     await updateProfile(userCredential.user, {
       displayName: name,
     });
+
+    setUser(auth.currentUser);
   };
 
   const login = async (email: string, password: string) => {
@@ -61,7 +64,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        register,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

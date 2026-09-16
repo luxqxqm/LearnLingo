@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFavorites } from "../../providers/FavoritesProvider";
+
+import styles from "./page.module.css";
 import { useAuth } from "../../hooks/useAuth";
 import { Teacher } from "../../types/teacher";
+import { useFavorites } from "../../providers/FavoritesProvider";
 import { getTeachers } from "../../lib/teachers";
 import TeacherCard from "../../components/TeacherCard/TeacherCard";
 
@@ -11,8 +13,7 @@ export default function FavoritesPage() {
   const { user, loading: authLoading } = useAuth();
   const { favorites } = useFavorites();
 
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [teachers, setTeachers] = useState<Teacher[] | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -28,8 +29,8 @@ export default function FavoritesPage() {
         );
 
         setTeachers(favoriteTeachers);
-      } finally {
-        setLoading(false);
+      } catch {
+        setTeachers([]);
       }
     };
 
@@ -37,28 +38,52 @@ export default function FavoritesPage() {
   }, [user, favorites]);
 
   if (authLoading) {
-    return <p>Loading...</p>;
+    return (
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <p className={styles.message}>Loading...</p>
+        </div>
+      </main>
+    );
   }
 
   if (!user) {
-    return <p>Please log in to view your favorite teachers.</p>;
+    return (
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <p className={styles.message}>
+            Please log in to view your favorite teachers.
+          </p>
+        </div>
+      </main>
+    );
   }
 
-  if (loading) {
-    return <p>Loading favorites...</p>;
+  if (teachers === null) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <p className={styles.message}>Loading favorites...</p>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main>
-      <h1>Favorites</h1>
-
-      {teachers.length === 0 ? (
-        <p>You have no favorite teachers yet.</p>
-      ) : (
-        teachers.map((teacher) => (
-          <TeacherCard key={teacher.id} teacher={teacher} />
-        ))
-      )}
+    <main className={styles.page}>
+      <div className={styles.container}>
+        {teachers.length === 0 ? (
+          <p className={styles.message}>You have no favorite teachers yet.</p>
+        ) : (
+          <ul className={styles.list}>
+            {teachers.map((teacher) => (
+              <li key={teacher.id}>
+                <TeacherCard teacher={teacher} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }
