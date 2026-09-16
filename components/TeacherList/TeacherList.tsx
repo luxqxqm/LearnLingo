@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 
+
 import styles from "./TeacherList.module.css";
 import { FiltersValues } from "../../types/filters";
 import { useTeachers } from "../../hooks/useTeachers";
+import Loader from "../Loader/Loader";
 import Filters from "../Filter/Filters";
 import TeacherCard from "../TeacherCard/TeacherCard";
 
@@ -28,7 +30,7 @@ export default function TeacherList() {
   } = useTeachers(filters);
 
   if (loading) {
-    return <p>Loading teachers...</p>;
+    return <Loader text="Loading teachers..." />;
   }
 
   if (error && teachers.length === 0) {
@@ -40,6 +42,8 @@ export default function TeacherList() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
+        <h1 className={styles.title}>Teachers</h1>
+
         <Filters
           teachers={filterTeachersData}
           values={filters}
@@ -66,7 +70,14 @@ export default function TeacherList() {
               onClick={loadMore}
               disabled={loadingMore}
             >
-              {loadingMore ? "Loading..." : "Load more"}
+              {loadingMore ? (
+                <span className={styles.buttonLoader}>
+                  <span className={styles.buttonSpinner} />
+                  Loading...
+                </span>
+              ) : (
+                "Load more"
+              )}
             </button>
           </div>
         )}

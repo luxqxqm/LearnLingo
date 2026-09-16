@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 
 import styles from "./AuthModal.module.css";
 import { useAuth } from "../../hooks/useAuth";
-import { loginSchema, registerSchema } from "../../schemas/authSchema";
 import { LoginFormValues, RegisterFormValues } from "../../types/auth";
+import { loginSchema, registerSchema } from "../../schemas/authSchema";
 import Icon from "../Icon/Icon";
 
 interface AuthModalProps {
@@ -23,6 +23,8 @@ export default function AuthModal({
   const { login, register: registerUser } = useAuth();
 
   const isLogin = initialMode === "login";
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: yupResolver(loginSchema),
@@ -85,6 +87,10 @@ export default function AuthModal({
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((current) => !current);
+  };
+
   return (
     <div className={styles.backdrop} onMouseDown={handleBackdropClick}>
       <div className={styles.modal}>
@@ -125,11 +131,22 @@ export default function AuthModal({
             </label>
 
             <label className={styles.field}>
-              <input
-                type="password"
-                placeholder="Password"
-                {...loginForm.register("password")}
-              />
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  {...loginForm.register("password")}
+                />
+
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={togglePasswordVisibility}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <Icon name="eye-off" width={20} height={20} />
+                </button>
+              </div>
 
               {loginForm.formState.errors.password && (
                 <span className={styles.error}>
@@ -180,11 +197,22 @@ export default function AuthModal({
             </label>
 
             <label className={styles.field}>
-              <input
-                type="password"
-                placeholder="Password"
-                {...registerForm.register("password")}
-              />
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  {...registerForm.register("password")}
+                />
+
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={togglePasswordVisibility}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <Icon name="eye-off" width={20} height={20} />
+                </button>
+              </div>
 
               {registerForm.formState.errors.password && (
                 <span className={styles.error}>

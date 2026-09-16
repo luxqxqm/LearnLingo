@@ -22,15 +22,34 @@ const advantages = [
 export default function Advantages() {
   return (
     <section className={styles.advantages}>
-      <ul className={styles.list}>
-        {advantages.map((advantage) => (
-          <li key={advantage.value} className={styles.item}>
-            <strong className={styles.value}>{advantage.value}</strong>
+      <div className={styles.list}>
+        <svg
+          className={styles.border}
+          viewBox="0 0 1312 116"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <rect
+            x="0.75"
+            y="0.75"
+            width="1310.5"
+            height="114.5"
+            rx="30"
+            fill="none"
+            stroke="#f4c550"
+            strokeWidth="1.5"
+            strokeDasharray="15 15"
+          />
+        </svg>
 
-            <span className={styles.description}>{advantage.description}</span>
-          </li>
+        {advantages.map((advantage) => (
+          <div key={advantage.description} className={styles.item}>
+            <p className={styles.value}>{advantage.value}</p>
+
+            <p className={styles.description}>{advantage.description}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </section>
   );
 }

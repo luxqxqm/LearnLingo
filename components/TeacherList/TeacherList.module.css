@@ -72,3 +72,25 @@
 .error {
     margin-top: 16px;
 }
+
+.buttonLoader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.buttonSpinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(18, 20, 23, 0.25);
+    border-top-color: var(--black-color);
+    border-radius: 50%;
+    animation: buttonSpin 700ms linear infinite;
+}
+
+@keyframes buttonSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}

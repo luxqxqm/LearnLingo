@@ -8,7 +8,8 @@ export type IconName =
   | "like"
   | "star"
   | "book-open"
-  | "close-icon";
+  | "close-icon"
+  | "eye-off";
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName;
