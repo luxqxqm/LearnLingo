@@ -1,7 +1,10 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
+
 import { FiltersValues } from "../../types/filters";
 import { Teacher } from "../../types/teacher";
+
 import styles from "./Filters.module.css";
 
 interface FiltersProps {
@@ -20,7 +23,9 @@ interface DropdownProps {
   className: string;
   onChange: (value: string) => void;
 }
-const prices = ["10", "20", "30", "40"];
+
+const priceOptions = ["10", "20", "30", "40"];
+
 function Dropdown({
   label,
   value,
@@ -107,7 +112,7 @@ function Dropdown({
                 }`}
                 onClick={() => handleSelect(option)}
               >
-                {option}
+                {option} $
               </button>
             ))}
           </div>
@@ -125,12 +130,6 @@ export default function Filters({ teachers, values, onChange }: FiltersProps) {
   const levels = Array.from(
     new Set(teachers.flatMap((teacher) => teacher.levels)),
   );
-
-  const prices = Array.from(
-    new Set(teachers.map((teacher) => teacher.price_per_hour)),
-  )
-    .sort((a, b) => a - b)
-    .map((price) => `${price} $`);
 
   const handleChange = (field: FilterKey, value: string) => {
     onChange({
@@ -162,10 +161,10 @@ export default function Filters({ teachers, values, onChange }: FiltersProps) {
       <Dropdown
         label="Price"
         value={values.price ? `${values.price} $` : ""}
-        options={prices}
+        options={priceOptions}
         placeholder="All"
         className={styles.priceField}
-        onChange={(value) => handleChange("price", value.replace(" $", ""))}
+        onChange={(value) => handleChange("price", value)}
       />
     </div>
   );

@@ -14,9 +14,15 @@ export const filterTeachers = (
       !filters.level ||
       teacher.levels.includes(filters.level);
 
+    const price = teacher.price_per_hour;
+    const maxPrice = Number(filters.price);
+
     const matchesPrice =
       !filters.price ||
-      teacher.price_per_hour === Number(filters.price);
+      (maxPrice === 10 && price <= 10) ||
+      (maxPrice === 20 && price > 10 && price <= 20) ||
+      (maxPrice === 30 && price > 20 && price <= 30) ||
+      (maxPrice === 40 && price > 30 && price <= 40);
 
     return matchesLanguage && matchesLevel && matchesPrice;
   });
