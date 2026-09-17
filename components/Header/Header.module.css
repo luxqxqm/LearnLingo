@@ -3,11 +3,13 @@
     background-color: #fff;
 }
 
+
+
 .wrapper {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
-    padding: 0 128px;
+    justify-content: center;
+    gap: 390px;
 }
 
 .logo {

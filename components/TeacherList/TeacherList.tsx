@@ -45,8 +45,6 @@ export default function TeacherList() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <h1 className={styles.title}>Teachers</h1>
-
         <Filters
           teachers={filterTeachersData}
           values={filters}
